@@ -4,7 +4,7 @@ import DropItem from "./DropItem";
 
 const RightSidebar = ({ items, setItems }) => {
   const [, drop] = useDrop({
-    accept: ["input", "textarea", "text"],
+    accept: ["input", "textarea", "text", "section"],
     drop: (item) => {
       let itemContent = "";
       if (item.type === "text") {
@@ -33,11 +33,13 @@ const RightSidebar = ({ items, setItems }) => {
   };
 
   return (
-    <div ref={drop} className="right-sidebar">
+    <div className="right-sidebar">
       <h3>Design Area</h3>
-      {items.map((item) => (
-        <DropItem key={item.id} item={item} />
-      ))}
+      <div ref={drop} className="design-area">
+        {items.map((item) => (
+          <DropItem key={item.id} item={item} />
+        ))}
+      </div>
     </div>
   );
 };

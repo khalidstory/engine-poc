@@ -5,7 +5,7 @@ const DropItem = ({ item }) => {
     return (
       <input
         type="text"
-        className={`drop-item ${item.attributes?.class}`}
+        className={`design-element ${item.attributes?.class}`}
         style={item.styles}
       />
     );
@@ -13,7 +13,7 @@ const DropItem = ({ item }) => {
   if (item.type === "textarea") {
     return (
       <textarea
-        className={`drop-item ${item.attributes?.class}`}
+        className={`design-element ${item.attributes?.class}`}
         style={item.styles}
       />
     );
@@ -21,7 +21,7 @@ const DropItem = ({ item }) => {
   if (item.type === "text") {
     return (
       <div
-        className={`drop-item ${item.attributes?.class}`}
+        className={`design-element ${item.attributes?.class}`}
         style={item.styles}
       >
         {item.content}

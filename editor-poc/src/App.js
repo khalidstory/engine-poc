@@ -3,6 +3,7 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import LeftSidebar from "./components/LeftSidebar";
 import RightSidebar from "./components/RightSidebar";
+import DesignStyles from "./DesignStyles.css";
 import "./App.css";
 
 const JSToCSS = (JS) => {
@@ -30,17 +31,7 @@ function App() {
     myHeaders.append("Content-Type", "application/json");
 
     const raw = JSON.stringify({
-      globalCss: `      
-body {
-  background-color: #fff;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.item {
-  margin: 10px 0;
-}`.trim(),
+      globalCss: DesignStyles,
       components: data,
     });
 

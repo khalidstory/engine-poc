@@ -1,16 +1,18 @@
 .container {
   display: flex;
-  height: 80vh;
+  width: 100vw;
+  height: calc(100vh - 47px);
+  overflow-y: auto;
 }
 
 .left-sidebar, .right-sidebar {
-  flex: 1;
   padding: 20px;
   border: 1px solid #ccc;
 }
 
 .left-sidebar {
   background-color: #f8f9fa;
+  flex: 1;
 }
 
 .right-sidebar {
@@ -18,6 +20,13 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  flex: 2;
+}
+
+.design-area {
+  width: 100%;
+  height: 100%;
+  border: 1px dashed gray;
 }
 
 .draggable-item {
@@ -27,10 +36,6 @@
   color: white;
   cursor: grab;
   border-radius: 4px;
-}
-
-.drop-item {
-  margin: 10px 0;
 }
 
 button {
