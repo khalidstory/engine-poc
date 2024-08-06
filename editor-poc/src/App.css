@@ -1,0 +1,46 @@
+.container {
+  display: flex;
+  height: 80vh;
+}
+
+.left-sidebar, .right-sidebar {
+  flex: 1;
+  padding: 20px;
+  border: 1px solid #ccc;
+}
+
+.left-sidebar {
+  background-color: #f8f9fa;
+}
+
+.right-sidebar {
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.draggable-item {
+  padding: 10px;
+  margin: 10px 0;
+  background-color: #007bff;
+  color: white;
+  cursor: grab;
+  border-radius: 4px;
+}
+
+.drop-item {
+  margin: 10px 0;
+}
+
+button {
+  -webkit-box-shadow: 10px 6px 20px -9px rgba(150,150,150,1);
+  -moz-box-shadow: 10px 6px 20px -9px rgba(150,150,150,1);
+  box-shadow: 10px 6px 20px -9px rgba(150,150,150,1);
+  background: blue;
+  color: white;
+  border: 0;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
