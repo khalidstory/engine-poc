@@ -25,7 +25,7 @@ app.post('/convert', (req, res) => {
   const components = json.components.map(createComponent).join('\n');
   const html = `<div>${components}</div>`;
 
-  const { js, css } = compile(html, { generate: 'dom', css: true });
+  const { js, css } = compile(html, { generate: 'dom', css: "injected" });
 
   fs.writeFileSync('output.html', html);
   fs.writeFileSync('output.css', css.code);
