@@ -8,7 +8,7 @@ const LeftSidebar = () => {
       <DraggableItem type="input" tagName="input" label="Input Field" />
       <DraggableItem type="textarea" tagName="textarea" label="Text Area" />
       <DraggableItem type="text" tagName="div" label="Text" />
-      <DraggableItem type="section" tagName="section" label="Section" />
+      {/* <DraggableItem type="section" tagName="section" label="Section" /> */}
     </div>
   );
 };
