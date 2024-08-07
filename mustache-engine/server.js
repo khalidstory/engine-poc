@@ -27,7 +27,7 @@ const templateSource = `
     <title>Web Page</title>
     <link rel="stylesheet" href="output.css">
 </head>
-<body>
+<body class="app-body">
 {{#components}}
 {{{.}}}
 {{/components}}

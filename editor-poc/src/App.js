@@ -3,8 +3,9 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import LeftSidebar from "./components/LeftSidebar";
 import RightSidebar from "./components/RightSidebar";
-import DesignStyles from "./DesignStyles.css";
 import "./App.css";
+import { DesignStyles } from "./GlobalStyles";
+import Button from '@mui/material/Button';
 
 const JSToCSS = (JS) => {
   let cssString = Object.keys(JS).reduce(
@@ -51,7 +52,7 @@ function App() {
   return (
     <div className="App">
       <div style={{ textAlign: "end", margin: 8 }}>
-        <button onClick={handlePublish}>Publish</button>
+        <Button variant="contained" onClick={handlePublish}>Publish</Button>
       </div>
       <DndProvider backend={HTML5Backend}>
         <div className="container">

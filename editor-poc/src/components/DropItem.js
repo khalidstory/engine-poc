@@ -1,4 +1,5 @@
 import React from "react";
+import SectionDropableArea from "./SectionDropableArea";
 
 const DropItem = ({ item }) => {
   if (item.type === "input") {
@@ -26,6 +27,11 @@ const DropItem = ({ item }) => {
       >
         {item.content}
       </div>
+    );
+  }
+  if (item.type === "section") {
+    return (
+      <SectionDropableArea item={item}>{item.components}</SectionDropableArea>
     );
   }
   return null;
