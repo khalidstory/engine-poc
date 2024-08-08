@@ -9,13 +9,17 @@ app.use(cors());
 
 nunjucks.configure({ autoescape: true });
 
-const componentTemplateSource = `<{{ tagName }} {% if attributes %} {% for key, value in attributes %} {{ key }}="{{ value }}" {% endfor %} {% endif %} style="{{ styleString }}">{{ content | safe }}</{{ tagName }}>`;
+const componentTemplateSource = `<{{ tagName }} {% if attributes %}{% for key, value in attributes %}{% if value === true %} {{ key }}{% else %} {{ key }}="{{ value }}"{% endif %}{% endfor %}{% endif %} style="{{ styleString }}">
+  {{ content | safe }}
+</{{ tagName }}>`;
 
 const renderComponent = (component) => {
   if (component && component.components && component.components.length > 0) {
-    component.content = component.components.map(subComponent => {
-      return renderComponent(subComponent);
-    }).join('');
+    component.content = component.components
+      .map((subComponent) => {
+        return renderComponent(subComponent);
+      })
+      .join("");
   }
   return nunjucks.renderString(componentTemplateSource, component);
 };
@@ -55,7 +59,9 @@ app.post("/convert", (req, res) => {
   });
 
   const renderedComponents = components.map(renderComponent);
-  const html = nunjucks.renderString(templateSource, { components: renderedComponents });
+  const html = nunjucks.renderString(templateSource, {
+    components: renderedComponents,
+  });
 
   fs.writeFileSync("output.html", html);
   fs.writeFileSync("output.css", json.globalCss);
