@@ -22,5 +22,10 @@ export const DesignStyles = `
     width: 100vw;
     height: 100vh;
   }
+  
+  .item {
+    width: 100%;
+    box-sizing: border-box;
+  }
 `;
 
