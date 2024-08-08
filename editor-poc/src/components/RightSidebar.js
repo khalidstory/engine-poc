@@ -4,11 +4,19 @@ import DropItem from "./DropItem";
 
 const RightSidebar = ({ items, setItems }) => {
   const [, drop] = useDrop({
-    accept: ["input", "textarea", "text", "section"],
+    accept: ["input", "textarea", "text", "section", "video"],
     drop: (item) => {
       let itemContent = "";
       if (item.type === "text") {
         itemContent = prompt("Please add item content") || "";
+      }
+      if (item.type === "video") {
+        itemContent = (
+          <source
+            src={prompt("Please add your video source") || ""}
+            type="video/mp4"
+          />
+        );
       }
       addItem(item.type, item.tagName, itemContent);
     },
@@ -23,6 +31,10 @@ const RightSidebar = ({ items, setItems }) => {
         tagName: tagName,
         attributes: {
           class: "item",
+          width: type === "video" && "100%",
+          height: type === "video" && "200px",
+          autoplay: type === "video" && true,
+          muted: type === "video" && true,
         },
         content: itemContent,
         styles: {
