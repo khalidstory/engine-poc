@@ -10,7 +10,6 @@ const RightSidebar = ({ items, setItems }) => {
       let itemAttributes = {};
       if (item.type === "text") {
         itemContent = prompt("Please add item content") || "";
-        console.log("itemContent:::", typeof itemContent);
       }
       if (item.type === "video") {
         itemAttributes = {
@@ -25,15 +24,7 @@ const RightSidebar = ({ items, setItems }) => {
             type="video/mp4"
           />
         );
-
-        console.log("itemContent:::", itemContent);
       }
-
-      // if (itemContent.type === "source") {
-      //   itemAttributes = {
-      //     type: "video/mp4",
-      //   };
-      // }
       addItem(item.type, item.tagName, itemContent, itemAttributes);
     },
   });
@@ -53,7 +44,6 @@ const RightSidebar = ({ items, setItems }) => {
       },
       components: handleComponents(itemContent),
     };
-    console.log("🚀 ~ addItem ~ newItem:", newItem);
 
     function handleComponents(itemContent) {
       // if there is no content
