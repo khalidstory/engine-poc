@@ -1,6 +1,13 @@
 import React from "react";
 import SectionDropableArea from "./SectionDropableArea";
 
+const renderSVGComponents = (components) => {
+  return components.map((component, index) => {
+    const { tagName, attributes } = component;
+    return React.createElement(tagName, { key: index, ...attributes }, null);
+  });
+};
+
 const DropItem = ({ item }) => {
   if (item.type === "input") {
     return (
@@ -26,6 +33,35 @@ const DropItem = ({ item }) => {
         style={item.styles}
       >
         {item.content}
+      </div>
+    );
+  }
+  if (item.type === "svg") {
+    return (
+      <div>
+        <svg
+          width={item.attributes.width}
+          height={item.attributes.height}
+          xmlns={item.attributes.xmlns}
+          style={item.styles}
+        >
+          {/* Render SVG components */}
+          {renderSVGComponents(item.components)}
+        </svg>
+
+        {/* Display item.content as text below the SVG */}
+        {item.content && (
+          <div
+            style={{
+              fontFamily: "Arial",
+              fontSize: "16px",
+              color: "black",
+              textAlign:"center"
+            }}
+          >
+            {item.content}
+          </div>
+        )}
       </div>
     );
   }
