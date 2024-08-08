@@ -56,7 +56,7 @@ app.post("/convert", (req, res) => {
 
   fs.writeFileSync("output.html", html);
   fs.writeFileSync("output.css", json.globalCss);
-  fs.writeFileSync("output.js", ""); // Add JS if required
+  fs.writeFileSync("output.js", "");
 
   res.status(200).send("Files created successfully");
 });
