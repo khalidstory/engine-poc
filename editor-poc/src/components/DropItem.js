@@ -34,6 +34,20 @@ const DropItem = ({ item }) => {
       <SectionDropableArea item={item}>{item.components}</SectionDropableArea>
     );
   }
+  if (item.type === "video") {
+    return (
+      <video
+        className={`design-element ${item.attributes?.class}`}
+        style={item.styles}
+        width="100%"
+        height="200px"
+        autoPlay
+        muted
+      >
+        {item.content}
+      </video>
+    );
+  }
   return null;
 };
 
