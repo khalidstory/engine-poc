@@ -3,6 +3,7 @@ const fs = require("fs");
 const cors = require("cors");
 const nunjucks = require("nunjucks");
 const axios = require("axios");
+const prettier = require("prettier");
 
 const app = express();
 app.use(express.json());
@@ -73,7 +74,7 @@ app.post("/convert", async (req, res) => {
     const response = await axios.get(
       "https://api.jsonbin.io/v3/b/66b89c2dad19ca34f8948e28"
     );
-    const tabName = response.data.record.tabName || "Default Tab Name";
+    const tabName = response.data?.record?.tabName || "Default Tab Name";
 
     const json = req.body;
     const components = json.components?.map((component) => {
@@ -83,12 +84,16 @@ app.post("/convert", async (req, res) => {
     });
 
     const renderedComponents = components.map(renderComponent);
-    const html = nunjucks.renderString(templateSource(tabName), {
+    let html = nunjucks.renderString(templateSource(tabName), {
       components: renderedComponents,
     });
 
+    // Prettify the HTML and CSS using Prettier
+    html = await prettier.format(html, { parser: "html" });
+    let css = await prettier.format(json.globalCss, { parser: "css" });
+
     fs.writeFileSync("output.html", html);
-    fs.writeFileSync("output.css", json.globalCss);
+    fs.writeFileSync("output.css", css);
     fs.writeFileSync("output.js", "");
 
     res.status(200).send("Files created successfully");

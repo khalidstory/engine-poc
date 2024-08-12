@@ -1,44 +1,64 @@
 const express = require("express");
 const fs = require("fs");
 const cors = require("cors");
-const Handlebars = require("handlebars");
+const handlebars = require("handlebars");
+const axios = require("axios");
+const prettier = require("prettier");
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-const componentTemplateSource = `<{{tagName}} {{#each attributes}} {{@key}}="{{this}}"{{/each}} style="{{styleString}}">{{{content}}}</{{tagName}}>`;
-const componentTemplate = Handlebars.compile(componentTemplateSource);
-
-Handlebars.registerPartial('component', componentTemplateSource);
-
-Handlebars.registerHelper("renderComponent", function (component) {
-  if (component && component.components && component.components.length > 0) {
-    component.content = component.components.map(subComponent => {
-      return Handlebars.helpers.renderComponent(subComponent);
-    }).join('');
-  }
-  return new Handlebars.SafeString(componentTemplate(component));
+// Register a custom helper to check if a value equals 'img'
+handlebars.registerHelper("ifEquals", function (arg1, arg2, options) {
+  return arg1 === arg2 ? options.fn(this) : options.inverse(this);
 });
 
-const templateSource = `
+// Register a helper to safely render content (since Handlebars escapes HTML by default)
+handlebars.registerHelper("safeContent", function (content) {
+  return new handlebars.SafeString(content);
+});
+
+const componentTemplateSource = `
+{{#ifEquals tagName "img"}}
+<{{tagName}} {{#if attributes}}{{#each attributes}} {{@key}}{{#ifEquals this true}} {{else}}="{{this}}"{{/ifEquals}}{{/each}}{{/if}} style="{{styleString}}" />
+{{else}}
+<{{tagName}} {{#if attributes}}{{#each attributes}} {{@key}}{{#ifEquals this true}} {{else}}="{{this}}"{{/ifEquals}}{{/each}}{{/if}} style="{{styleString}}">
+  {{{safeContent content}}}
+</{{tagName}}>
+{{/ifEquals}}
+`;
+
+const renderComponent = (component) => {
+  if (component && component.components && component.components.length > 0) {
+    component.content = component.components
+      .map((subComponent) => {
+        return renderComponent(subComponent);
+      })
+      .join("");
+  }
+  const template = handlebars.compile(componentTemplateSource);
+  return template(component);
+};
+
+const templateSource = (tabName) => `
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Page</title>
+    <title>${tabName}</title>
     <link rel="stylesheet" href="output.css">
 </head>
 <body class="app-body">
 {{#each components}}
-{{{renderComponent this}}}
+{{{this}}}
 {{/each}}
 </body>
 </html>
 `;
 
-const applyStyles = (styleObj) => {
+const applyStyles = (styleObj = {}) => {
   let styleString = "";
   for (const [key, value] of Object.entries(styleObj)) {
     styleString += `${key}: ${value};`;
@@ -46,23 +66,51 @@ const applyStyles = (styleObj) => {
   return styleString;
 };
 
-app.post("/convert", (req, res) => {
-  const json = req.body;
-  const components = json.components.map((component) => {
-    return {
-      ...component,
-      styleString: applyStyles(component.styles),
-    };
-  });
+const convertComponentStyles = (component) => {
+  return {
+    ...component,
+    styleString: applyStyles(component.styles),
+    components:
+      component.components?.map((component) => {
+        return {
+          ...convertComponentStyles(component),
+        };
+      }) ?? [],
+  };
+};
 
-  const template = Handlebars.compile(templateSource);
-  const html = template({ components });
+app.post("/convert", async (req, res) => {
+  try {
+    // Fetch tab name from the API
+    const response = await axios.get(
+      "https://api.jsonbin.io/v3/b/66b89c2dad19ca34f8948e28"
+    );
+    const tabName = response.data?.record?.tabName || "Default Tab Name";
 
-  fs.writeFileSync("output.html", html);
-  fs.writeFileSync("output.css", json.globalCss);
-  fs.writeFileSync("output.js", "");
+    const json = req.body;
+    const components = json.components?.map((component) => {
+      return {
+        ...convertComponentStyles(component),
+      };
+    });
 
-  res.status(200).send("Files created successfully");
+    const renderedComponents = components.map(renderComponent);
+    const template = handlebars.compile(templateSource(tabName));
+    let html = template({ components: renderedComponents });
+
+    // Prettify the HTML and CSS using Prettier
+    html = await prettier.format(html, { parser: "html" });
+    let css = await prettier.format(json.globalCss, { parser: "css" });
+
+    fs.writeFileSync("output.html", html);
+    fs.writeFileSync("output.css", css);
+    fs.writeFileSync("output.js", "");
+
+    res.status(200).send("Files created successfully");
+  } catch (error) {
+    console.error("Error fetching tab name:", error);
+    res.status(500).send("Failed to create files");
+  }
 });
 
 app.listen(3000, () => console.log("Server started on port 3000"));
